@@ -74,5 +74,22 @@ jobs:
       - name: Aguardar servidor iniciar
         run: npx wait-on http://localhost:3000 --timeout 60000
       
-      - name: Executar testes de API
+      - name: Executar testes de API (Node.js)
         run: node scripts/run-api-tests.js
+      
+      - name: Executar testes de API (Postman/Newman)
+        run: npm run test:api:postman
+      
+      - name: Gerar relatório Postman
+        if: always()
+        run: |
+          mkdir -p reports
+          npm run test:api:postman:report || true
+      
+      - name: Upload relatório Postman
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: postman-report
+          path: reports/newman-report.html
+          retention-days: 7

@@ -1,0 +1,149 @@
+openapi: 3.0.3
+info:
+  title: Task Manager API
+  description: API para gerenciamento de tarefas com endpoints para testes e health checks
+  version: 1.0.0
+  contact:
+    name: QA Team
+    email: qa@example.com
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desenvolvimento local
+  - url: https://api.example.com
+    description: Servidor de produção
+
+paths:
+  /api/health:
+    get:
+      summary: Health Check
+      description: Retorna o status de saúde da API
+      operationId: getHealth
+      tags:
+        - Health
+      responses:
+        '200':
+          description: API está funcionando corretamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: ok
+                timestamp: "2025-01-27T12:00:00.000Z"
+                service: "Task Manager API"
+                version: "1.0.0"
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Health Check com dados
+      description: Recebe dados e retorna confirmação
+      operationId: postHealth
+      tags:
+        - Health
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              example:
+                test: "data"
+                timestamp: 1640620800000
+      responses:
+        '200':
+          description: Dados recebidos com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthPostResponse'
+              example:
+                status: success
+                message: "Request received"
+                data:
+                  test: "data"
+                  timestamp: 1640620800000
+        '400':
+          description: Erro na requisição (JSON inválido)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                message: "Invalid JSON"
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+        - service
+        - version
+      properties:
+        status:
+          type: string
+          enum: [ok]
+          description: Status da API
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp da requisição
+        service:
+          type: string
+          description: Nome do serviço
+        version:
+          type: string
+          description: Versão da API
+
+    HealthPostResponse:
+      type: object
+      required:
+        - status
+        - message
+        - data
+      properties:
+        status:
+          type: string
+          enum: [success]
+          description: Status da operação
+        message:
+          type: string
+          description: Mensagem de confirmação
+        data:
+          type: object
+          description: Dados recebidos na requisição
+          additionalProperties: true
+
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: string
+          enum: [error]
+          description: Status de erro
+        message:
+          type: string
+          description: Mensagem de erro
+
+tags:
+  - name: Health
+    description: Endpoints de health check e validação da API
+

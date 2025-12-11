@@ -9,6 +9,8 @@
     "start": "next start",
     "test:all": "npm run test:e2e:headless && npm run test:api",
     "test:api": "node scripts/run-api-tests.js",
+    "test:api:postman": "newman run postman/collections/health-api.postman_collection.json -e postman/environments/local.postman_environment.json",
+    "test:api:postman:report": "newman run postman/collections/health-api.postman_collection.json -e postman/environments/local.postman_environment.json -r html --reporter-html-export reports/newman-report.html",
     "test:e2e": "cypress open",
     "test:e2e:headless": "cypress run"
   },
@@ -71,6 +73,8 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitest/ui": "^4.0.10",
+    "newman": "^4.6.1",
+    "newman-reporter-html": "^1.0.5",
     "postcss": "^8.5",
     "tailwindcss": "^4.1.9",
     "tw-animate-css": "1.3.3",
